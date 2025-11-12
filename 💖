@@ -1,0 +1,268 @@
+<!DOCTYPE html><html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Kass, veux-tu sortir avec moi ? 💘</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;800&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --rose:#ff6b9a; --rose2:#ff9ec2; --rouge:#ff3b6f; --creme:#fff7fb; --violet:#b37dff; --or:#ffd166; --vert:#7ed957;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; font-family:Poppins,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,'Helvetica Neue',Arial,sans-serif;
+      color:#40223b; background: radial-gradient(1200px 800px at 20% 10%, #ffe0ee, transparent 60%),
+                  radial-gradient(900px 700px at 80% 0%, #ffeaf6, transparent 60%),
+                  linear-gradient(180deg,#fff9fb 0%, #ffe7f2 60%, #ffd9eb 100%);
+      overflow-x:hidden;
+    }
+    /* Subtle floral pattern */
+    body:before{
+      content:""; position:fixed; inset:0; pointer-events:none; opacity:.2;
+      background-image:
+        url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160"><g fill="%23ff9ec2" fill-opacity="0.35"><path d="M80 20c10 18 22 16 34 20-14 6-18 14-20 26-6-12-12-18-26-20 12-6 18-10 12-26z"/><circle cx="120" cy="120" r="12"/><circle cx="30" cy="120" r="10"/></g><g fill="%23ffd166" fill-opacity="0.35"><circle cx="80" cy="80" r="6"/><circle cx="110" cy="45" r="5"/><circle cx="45" cy="50" r="4"/></g></svg>');
+      background-size:160px 160px;
+    }.wrap{min-height:100%; display:grid; place-items:center; padding:32px}
+
+.card{
+  position:relative; width:min(920px, 92vw); padding:28px 24px 20px; border-radius:28px;
+  background:rgba(255,255,255,.68); backdrop-filter: blur(10px);
+  box-shadow:0 20px 60px rgba(255, 59, 111, .15), inset 0 0 0 1px rgba(255,255,255,.6);
+}
+
+.badge{
+  display:inline-flex; align-items:center; gap:8px; font-size:12px; letter-spacing:.4px; text-transform:uppercase;
+  background:linear-gradient(90deg, var(--rose), var(--violet)); color:white; padding:6px 12px; border-radius:999px;
+  box-shadow:0 6px 16px rgba(255, 59, 111, .25);
+}
+
+h1{
+  font-family:"Playfair Display", serif; font-weight:800; line-height:1.1; margin:14px 0 4px; font-size:clamp(28px, 4.5vw, 56px);
+  background:linear-gradient(90deg,#40223b 0%, #883c72 35%, #ff3b6f 100%); -webkit-background-clip:text; color:transparent;
+}
+.subtitle{margin:0 0 20px; color:#6d4b63}
+
+.grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(220px,1fr)); gap:12px}
+
+button.choice{
+  width:100%; border:0; border-radius:18px; padding:14px 16px; text-align:left; cursor:pointer; font-weight:600;
+  background:linear-gradient(180deg,#fff,#ffeaf4); color:#5a3451; transition:.2s transform, .2s box-shadow; position:relative;
+  box-shadow:0 6px 20px rgba(255, 59, 111, .10), inset 0 0 0 1px #ffd6e7;
+}
+button.choice:hover{ transform:translateY(-2px); box-shadow:0 10px 26px rgba(255, 59, 111, .18)}
+button.choice .small{display:block; font-weight:400; font-size:12px; opacity:.85}
+
+.choice[data-free="1"]::after{
+  content:"✍️ précise ta réponse"; position:absolute; right:12px; top:10px; font-size:11px; opacity:.7
+}
+
+.inputRow{display:none; margin-top:10px}
+.inputRow.active{display:flex}
+.inputRow input{
+  flex:1; border:1.5px solid #ffc3dc; border-radius:14px; padding:12px 14px; outline:none; font-size:14px; background:#fffafc
+}
+
+.actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:16px}
+.btn{
+  border:0; border-radius:999px; padding:12px 16px; font-weight:700; cursor:pointer; transition:.2s transform, .2s box-shadow;
+}
+.btn-primary{background:linear-gradient(90deg, var(--rouge), var(--rose2)); color:white; box-shadow:0 10px 22px rgba(255, 59, 111, .3)}
+.btn-secondary{background:#fff; color:#7a4a6d; box-shadow:0 6px 16px rgba(0,0,0,.06); border:1px solid #ffd6e7}
+.btn:hover{transform:translateY(-1px)}
+
+.result{margin-top:22px; padding:14px 16px; border-radius:16px; background:#fff; border:1px solid #ffd6e7; display:none}
+
+/* Floating hearts */
+.sky{position:fixed; inset:0; overflow:hidden; pointer-events:none}
+.heart{position:absolute; font-size:14px; opacity:.8; animation:float var(--dur) linear infinite; will-change:transform,opacity}
+@keyframes float{0%{transform:translateY(110vh) scale(.8) rotate(0)} 100%{transform:translateY(-10vh) scale(1.2) rotate(360deg); opacity:0}}
+
+/* Modal */
+.modal{position:fixed; inset:0; display:none; place-items:center; background:rgba(46,18,40,.35); backdrop-filter:blur(6px)}
+.modalCard{width:min(560px,92vw); background:#fff; border-radius:24px; padding:22px; border:1px solid #ffd6e7; box-shadow:0 30px 80px rgba(255, 59, 111, .3)}
+.modal h2{font-family:"Playfair Display", serif; margin:0 0 8px; font-size:clamp(22px,4vw,34px)}
+.modal p{margin:0 0 12px}
+
+.footer{margin-top:18px; font-size:12px; color:#7a4a6d; opacity:.8}
+.footer a{color:#883c72}
+
+  </style>
+</head>
+<body>
+  <div class="sky" aria-hidden="true"></div>
+  <div class="wrap">
+    <div class="card">
+      <span class="badge">💞 Quiz ultra romantique</span>
+      <h1>Kass, veux‑tu sortir avec moi&nbsp;?</h1>
+      <p class="subtitle">Choisis ta réponse (beaucoup de <span aria-hidden="true">💖</span> et quelques fleurs 🌸 t’attendent).
+      </p><div class="grid" id="choices"></div>
+
+  <div class="inputRow" id="freeInputRow">
+    <input id="freeInput" placeholder="Écris ton ‘mais…’ ou ‘parce que…’ ici ✍️" />
+  </div>
+
+  <div class="actions">
+    <button class="btn btn-primary" id="btnValider">Valider ma réponse 💌</button>
+    <button class="btn btn-secondary" id="btnCopier">Copier un lien de réponse 🔗</button>
+  </div>
+
+  <div class="result" id="result"></div>
+
+  <div class="footer">Fait avec <span aria-hidden="true">❤️</span> et des fleurs. Tu peux publier ce fichier seul sur GitHub Pages.
+  </div>
+</div>
+
+  </div>  <div class="modal" id="modal">
+    <div class="modalCard">
+      <h2>🌹 Réponse envoyée</h2>
+      <p id="modalText"></p>
+      <div class="actions">
+        <button class="btn btn-primary" id="btnClose">Fermer</button>
+        <button class="btn btn-secondary" id="btnCopyText">Copier le texte 💬</button>
+      </div>
+    </div>
+  </div>  <script>
+    const OPTIONS = [
+      { t:"Oui, évidemment" },
+      { t:"Oui, mais...", free:true, hint:"Qu’est‑ce qui te ferait dire oui à 200%?" },
+      { t:"Oui, parce que...", free:true, hint:"Complète ta pensée 🥰" },
+      { t:"Oui, il était temps que tu le demandes" },
+      { t:"Oui, t’es mieux d’être à la hauteur" },
+      { t:"Oui, sois cohérent pour la suite svp" },
+      { t:"Oui, parce que t’es mieux que mon père" },
+      { t:"Oui, à condition que tu me donnes minimum 1 orgasme par jour" },
+      { t:"Oui, à condition que tu règles le problème de mauvaise haleine de mon chien" },
+      { t:"Oui, à condition que tu restes sweet et quétaine pour toujours" },
+      { t:"Oui, maître" },
+      { t:"Oui, mais seulement si je te fais toujours à manger" }
+    ];
+
+    const choicesEl = document.getElementById('choices');
+    const freeRow = document.getElementById('freeInputRow');
+    const freeInput = document.getElementById('freeInput');
+    const result = document.getElementById('result');
+    const btnValider = document.getElementById('btnValider');
+    const btnCopier = document.getElementById('btnCopier');
+    const modal = document.getElementById('modal');
+    const modalText = document.getElementById('modalText');
+    const btnClose = document.getElementById('btnClose');
+    const btnCopyText = document.getElementById('btnCopyText');
+
+    let selected = null;
+
+    function renderChoices(){
+      choicesEl.innerHTML = '';
+      OPTIONS.forEach((opt, idx)=>{
+        const b = document.createElement('button');
+        b.className = 'choice';
+        b.type = 'button';
+        b.setAttribute('data-index', idx);
+        if(opt.free) b.setAttribute('data-free','1');
+        b.innerHTML = `💗 ${opt.t} ${opt.hint?`<span class="small">${opt.hint}</span>`:''}`;
+        b.addEventListener('click',()=>select(idx));
+        choicesEl.appendChild(b);
+      })
+    }
+
+    function select(idx){
+      selected = idx;
+      [...choicesEl.querySelectorAll('.choice')].forEach(el=>{
+        el.style.outline = '2px solid #ff9ec2';
+        el.style.boxShadow = '0 10px 24px rgba(255, 59, 111, .20)';
+        el.style.transform = 'none';
+        el.style.opacity = '.85';
+      });
+      const current = choicesEl.querySelector(`[data-index="${idx}"]`);
+      current.style.outline = '3px solid var(--rouge)';
+      current.style.opacity = '1';
+
+      const opt = OPTIONS[idx];
+      if(opt.free){
+        freeRow.classList.add('active');
+        freeInput.placeholder = opt.t.includes('mais')? 'Ex.: …mais tu me dois un souper aux chandelles.' : 'Ex.: …parce que tu me fais fondre.';
+        freeInput.focus();
+      } else {
+        freeRow.classList.remove('active');
+      }
+      triggerHearts(10);
+    }
+
+    function buildAnswer(){
+      if(selected===null){
+        return {text:"Choisis une option d'abord 💞"};
+      }
+      const o = OPTIONS[selected];
+      let text = o.t;
+      if(o.free){
+        const extra = (freeInput.value||'').trim();
+        if(extra){
+          text = o.t.replace('...', '') + ' ' + extra;
+        }
+      }
+      return {text};
+    }
+
+    btnValider.addEventListener('click', ()=>{
+      const {text} = buildAnswer();
+      modalText.textContent = text;
+      modal.style.display = 'grid';
+      result.style.display='block';
+      result.textContent = 'Réponse: ' + text;
+      triggerHearts(24);
+    });
+
+    btnClose.addEventListener('click', ()=>{
+      modal.style.display='none';
+    });
+
+    btnCopyText.addEventListener('click', ()=>{
+      navigator.clipboard.writeText(modalText.textContent).then(()=>{
+        btnCopyText.textContent = 'Copié ✅';
+        setTimeout(()=>btnCopyText.textContent='Copier le texte 💬', 1200);
+      })
+    });
+
+    btnCopier.addEventListener('click', ()=>{
+      const {text} = buildAnswer();
+      const url = new URL(window.location.href);
+      url.searchParams.set('reponse', encodeURIComponent(text));
+      navigator.clipboard.writeText(url.toString())
+        .then(()=>{
+          btnCopier.textContent = 'Lien copié ✅';
+          setTimeout(()=>btnCopier.textContent='Copier un lien de réponse 🔗', 1200);
+        });
+    });
+
+    function triggerHearts(n=14){
+      const sky = document.querySelector('.sky');
+      for(let i=0;i<n;i++){
+        const s = document.createElement('div');
+        s.className='heart';
+        s.style.left = Math.random()*100+'vw';
+        s.style.bottom = (-10 + Math.random()*10)+'vh';
+        s.style.fontSize = (12 + Math.random()*22)+'px';
+        s.style.setProperty('--dur', (6+Math.random()*6)+'s');
+        s.textContent = Math.random()>.2? '💖' : (Math.random()>.5? '🌸':'💗');
+        sky.appendChild(s);
+        setTimeout(()=>s.remove(), 8000);
+      }
+    }
+
+    function initFromURL(){
+      const qp = new URLSearchParams(location.search);
+      const pre = qp.get('reponse');
+      if(pre){
+        const text = decodeURIComponent(pre);
+        result.style.display='block';
+        result.textContent='Réponse pré‑remplie: ' + text;
+      }
+    }
+
+    renderChoices();
+    initFromURL();
+    triggerHearts(20);
+  </script></body>
+</html>
